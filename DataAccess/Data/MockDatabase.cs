@@ -23,6 +23,11 @@ public class MockDatabase : IDatabase
         return _contacts;
     }
 
+    public void ClearContacts()
+    {
+        _contacts.Clear();
+    }
+
     private void AddContact(IContactInputModel contact)
     {
         ContactModel contactModel = new ContactModel

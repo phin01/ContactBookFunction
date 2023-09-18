@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Text.Json;
+using Azure;
 using ContactBook.Models;
 using DataAccessLibrary.Data;
 using DataAccessLibrary.Models;
@@ -58,6 +59,26 @@ namespace ContactCompiler
         public HttpResponseData ExportContacts([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestData req)
         {
             var response = req.CreateResponse(HttpStatusCode.OK);
+            return response;
+        }
+
+        [Function("ClearContacts")]
+        public HttpResponseData ClearContacts([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
+        {
+            HttpResponseData response;
+            try
+            {
+                _db.ClearContacts();
+                response = req.CreateResponse(HttpStatusCode.OK);
+                response.WriteString("Database Cleared");
+                
+            }
+            catch (Exception)
+            {
+                response = req.CreateResponse(HttpStatusCode.InternalServerError);
+                response.WriteString("Failed to clear database");
+            }
+
             return response;
         }
     }
