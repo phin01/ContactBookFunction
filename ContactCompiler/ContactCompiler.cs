@@ -48,10 +48,18 @@ namespace ContactCompiler
         [Function("ListContacts")]
         public async Task<HttpResponseData> ListContactsAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestData req)
         {
-            var contacts = _db.GetAllContacts().ToList();
-
-            var response = req.CreateResponse(HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(contacts);
+            HttpResponseData response;
+            try
+            {
+                var contacts = _db.GetAllContacts().ToList();
+                response = req.CreateResponse(HttpStatusCode.OK);
+                await response.WriteAsJsonAsync(contacts);
+            }
+            catch (Exception)
+            {
+                response = req.CreateResponse(HttpStatusCode.InternalServerError);
+                response.WriteString($"Could not retrieve list of contacts");
+            }
             return response;
         }
 
